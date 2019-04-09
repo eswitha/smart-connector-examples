@@ -1,0 +1,145 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Header>
+		<ns1:SessionHeader xmlns:ns1="http://roadnet.com/apex/DataContracts/">
+			<ns1:SessionGuid>ae4177e6-22b7-463f-8be3-96044b827f1e
+			</ns1:SessionGuid>
+		</ns1:SessionHeader>
+	</soap:Header>
+	<soap:Body>
+		<ns0:Save xmlns:ns0="http://roadnet.com/apex/">
+			<ns0:regionContext xmlns:ns2="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:ns1="http://roadnet.com/apex/DataContracts/" ns2:type="ns1:SingleRegionContext">
+				<ns1:BusinessUnitEntityKey xmlns:ns1="http://roadnet.com/apex/DataContracts/">202
+				</ns1:BusinessUnitEntityKey>
+				<ns1:RegionEntityKey xmlns:ns1="http://roadnet.com/apex/DataContracts/">606
+				</ns1:RegionEntityKey>
+			</ns0:regionContext>
+			<ns0:objects>
+				<ns1:AggregateRootEntity xmlns:ns1="http://roadnet.com/apex/DataContracts/"
+					xmlns:ns2="http://www.w3.org/2001/XMLSchema-instance" ns2:type="ns1:ServiceLocation">
+					<ns3:Action
+						xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">Update</ns3:Action>
+					<ns3:CustomProperties
+						xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">
+						<ns4:KeyValueOfstringanyType
+							xmlns:ns4="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+							<ns4:Key>ContactEmail</ns4:Key>
+							<ns4:Value xmlns:ns5="http://www.w3.org/2001/XMLSchema"
+								ns2:type="ns5:string">AlexPrimary@gmail.com</ns4:Value>
+						</ns4:KeyValueOfstringanyType>
+						<ns4:KeyValueOfstringanyType
+							xmlns:ns4="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+							<ns4:Key>AlternateContactEmail</ns4:Key>
+							<ns4:Value xmlns:ns5="http://www.w3.org/2001/XMLSchema"
+								ns2:type="ns5:string">altCustEmail@aol.com</ns4:Value>
+						</ns4:KeyValueOfstringanyType>
+					</ns3:CustomProperties>
+					<ns3:EntityKey
+						xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">749426</ns3:EntityKey>
+					<ns1:BusinessUnitEntityKey>202</ns1:BusinessUnitEntityKey>
+					<ns1:RegionEntityKey>
+						<ns4:long
+							xmlns:ns4="http://schemas.microsoft.com/2003/10/Serialization/Arrays">606</ns4:long>
+					</ns1:RegionEntityKey>
+					<ns1:Address>
+						<ns1:AddressLine1>222 S. Riverside Plaza</ns1:AddressLine1>
+						<ns1:AddressLine2>Suite 1900</ns1:AddressLine2>
+						<ns1:CrossStreet>xyz</ns1:CrossStreet>
+						<ns1:Locality>
+							<ns1:AdminDivision1>IL</ns1:AdminDivision1>
+							<ns1:AdminDivision3>Chicago</ns1:AdminDivision3>
+							<ns1:CountryISO3Abbr>USA</ns1:CountryISO3Abbr>
+							<ns1:PostalCode>60606</ns1:PostalCode>
+						</ns1:Locality>
+					</ns1:Address>
+					<ns1:AlternateContact>
+						<ns1:First>Steve</ns1:First>
+						<ns1:Last>Smith</ns1:Last>
+						<ns1:Middle>vika</ns1:Middle>
+					</ns1:AlternateContact>
+					<ns1:AlternatePhoneNumber>5555555555</ns1:AlternatePhoneNumber>
+					<ns1:Contact>
+						<ns1:First>John</ns1:First>
+						<ns1:Last>Doe</ns1:Last>
+						<ns1:Middle />
+					</ns1:Contact>
+					<ns1:Coordinate>
+						<ns1:Latitude>41878070</ns1:Latitude>
+						<ns1:Longitude>-87639100</ns1:Longitude>
+					</ns1:Coordinate>
+					<ns1:Description>GAVIN Roadnet TEST</ns1:Description>
+					<ns1:FaxNumber />
+					<ns1:GeocodeAccuracy_GeocodeAccuracy>RooftopExact
+					</ns1:GeocodeAccuracy_GeocodeAccuracy>
+					<ns1:Identifier>GAVIN</ns1:Identifier>
+					<ns1:LastOrderDate>2018-05-02</ns1:LastOrderDate>
+					<ns1:PhoneNumber />
+					<ns1:StandardInstructions>park around back
+					</ns1:StandardInstructions>
+					<ns1:WorldTimeZone_TimeZone>EasternTimeUSCanada
+					</ns1:WorldTimeZone_TimeZone>
+					<ns1:DayOfWeekFlags_DeliveryDays>All
+					</ns1:DayOfWeekFlags_DeliveryDays>
+					<ns1:OpenCloseOverrides>
+						<ns1:ServiceLocationOpenCloseDetail>
+							<ns3:Action
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">Delete</ns3:Action>
+							<ns3:EntityKey
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">1910230</ns3:EntityKey>
+						</ns1:ServiceLocationOpenCloseDetail>
+						<ns1:ServiceLocationOpenCloseDetail>
+							<ns3:Action
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">Add</ns3:Action>
+							<ns1:DailyTimePeriod>
+								<ns1:DayOfWeekFlags_DaysOfWeek>Tuesday,Thursday
+								</ns1:DayOfWeekFlags_DaysOfWeek>
+								<ns1:EndTime>10:00:00.0000000</ns1:EndTime>
+								<ns1:StartTime>02:00:00.0000000</ns1:StartTime>
+							</ns1:DailyTimePeriod>
+							<ns1:OrderClassEntityKey>505</ns1:OrderClassEntityKey>
+						</ns1:ServiceLocationOpenCloseDetail>
+					</ns1:OpenCloseOverrides>
+					<ns1:ServiceLocationCategoryEntityKey>305
+					</ns1:ServiceLocationCategoryEntityKey>
+					<ns1:ServiceTimeTypeEntityKey>505</ns1:ServiceTimeTypeEntityKey>
+					<ns1:ServiceWindowOverrides>
+						<ns1:ServiceLocationOpenCloseDetail>
+							<ns3:Action
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">Delete</ns3:Action>
+							<ns3:EntityKey
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">1910230</ns3:EntityKey>
+						</ns1:ServiceLocationOpenCloseDetail>
+						<ns1:ServiceLocationServiceWindowDetail>
+							<ns3:Action
+								xmlns:ns3="http://schemas.datacontract.org/2004/07/Roadnet.Apex.Server.Services.DataTransferObjectMapping">Add</ns3:Action>
+							<ns1:DailyTimePeriod>
+								<ns1:DayOfWeekFlags_DaysOfWeek>Tuesday,Thursday
+								</ns1:DayOfWeekFlags_DaysOfWeek>
+								<ns1:EndTime>10:00:00.0000000</ns1:EndTime>
+								<ns1:StartTime>02:00:00.0000000</ns1:StartTime>
+							</ns1:DailyTimePeriod>
+							<ns1:OrderClassEntityKey>505</ns1:OrderClassEntityKey>
+						</ns1:ServiceLocationServiceWindowDetail>
+					</ns1:ServiceWindowOverrides>
+					<ns1:StandingDeliveryQuantities>
+						<ns1:Size1>1</ns1:Size1>
+						<ns1:Size2>0</ns1:Size2>
+						<ns1:Size3>0</ns1:Size3>
+					</ns1:StandingDeliveryQuantities>
+					<ns1:StandingPickupQuantities>
+						<ns1:Size1>0</ns1:Size1>
+						<ns1:Size2>0</ns1:Size2>
+						<ns1:Size3>0</ns1:Size3>
+					</ns1:StandingPickupQuantities>
+					<ns1:TimeWindowTypeEntityKey>606</ns1:TimeWindowTypeEntityKey>
+				</ns1:AggregateRootEntity>
+			</ns0:objects>
+			<ns0:options>
+				<ns1:IgnoreEntityVersion xmlns:ns1="http://roadnet.com/apex/DataContracts/">true
+				</ns1:IgnoreEntityVersion>
+				<ns1:InclusionMode xmlns:ns1="http://roadnet.com/apex/DataContracts/">All
+				</ns1:InclusionMode>
+			</ns0:options>
+		</ns0:Save>
+	</soap:Body>
+</soap:Envelope>

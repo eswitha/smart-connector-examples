@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "mappingURL": {
+      "type": "string"
+    },
+    "routingURL": {
+      "type": "string"
+    },
+    "queryURL": {
+      "type": "string"
+    },
+    "sessionGuid": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "mappingURL",
+    "routingURL",
+    "queryURL",
+    "sessionGuid"
+  ]
+}

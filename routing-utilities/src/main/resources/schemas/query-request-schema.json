@@ -1,0 +1,54 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"returnType": {
+			"type": "string"
+		},
+		"expression": {
+			"type": "object",
+			"properties": {
+				"fieldName": {
+					"type": "string"
+				},
+				"fieldType": {
+					"type": "string"
+				},
+				"value": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"fieldName",
+				"fieldType",
+				"value"
+			]
+		},
+		"retrievalFields": {
+			"propertyType": "object",
+			"properties": {
+				"type": {
+					"type": "string"
+				},
+				"customFields": {
+					"type": "boolean"
+				},
+				"fields": {
+					"type": "array",
+					"items": [
+						{
+							"type": ["string", "object"]
+						}
+					]
+				}
+			},
+			"required": [
+				"propertyType",
+				"fields"
+			]
+		}
+	},
+	"required": [
+		"returnType"
+	]
+}

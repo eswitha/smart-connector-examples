@@ -1,0 +1,86 @@
+{
+	"$id": "http://example.com/example.json",
+	"type": "object",
+	"definitions": {
+		
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"properties": {
+		"fields": {
+			"$id": "/properties/fields",
+			"type": "object",
+			"properties": {
+				"sub1": {
+					"$id": "/properties/fields/properties/sub1",
+					"type": "string",
+					"title": "The Sub1 Schema ",
+					"default": "",
+					"examples": [
+						"value1"
+					]
+				},
+				"sub2": {
+					"$id": "/properties/fields/properties/sub2",
+					"type": "string",
+					"title": "The Sub2 Schema ",
+					"default": "",
+					"examples": [
+						"value2"
+					]
+				}
+			}
+		},
+		"customProperties" : {
+			"$id" : "/properties/customProperties",
+			"type" : "array",
+			"items" : [
+				{
+					"type" : "object",
+					"properties" : {
+						"key" : {
+							"type" : "string"
+						},
+						"value" : {
+							"type" : ["string", "integer", "boolean"]
+						},
+						"valueType" : {
+							"type" : "string"
+						}
+					}
+				}
+			]
+		},
+		"options": {
+			"$id": "/properties/options",
+			"type": "object",
+			"properties": {
+				"optionType": {
+					"$id": "/properties/options/properties/optionType",
+					"type": "string",
+					"title": "The Optiontype Schema ",
+					"default": "",
+					"examples": [
+						"optionValue"
+					]
+				},
+				"customProperties" : {
+					"type" : "boolean"
+				},
+				"fields": {
+					"$id": "/properties/options/properties/fields",
+					"type": "array",
+					"items": {
+						"$id": "/properties/options/properties/fields/items",
+						"type": "string",
+						"title": "The 0th Schema ",
+						"default": "",
+						"examples": [
+							"field1",
+							"field2"
+						]
+					}
+				}
+			}
+		}
+	}
+}

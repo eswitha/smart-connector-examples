@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Routing Utilities"
+        doc:description="Log audit messages"
+		xmlns:tns="http://www.mulesoft.org/schema/mule/routing-utilities"
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+        xmlns:core="http://www.mulesoft.org/schema/mule/core"
+		xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:audit="http://www.mulesoft.org/schema/mule/audit"
+		xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+        xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/routing-utilities http://www.mulesoft.org/schema/mule/routing-utilities/current/mule-routing-utilities.xsd
+http://www.mulesoft.org/schema/mule/audit http://www.mulesoft.org/schema/mule/audit/current/mule-audit.xsd">
+	<property name="wsdlUrl" type="string"/>
+	<property name="loginUrl" type="string"/>
+	<property name="userName" type="string"/>
+	<property name="password" type="string" password="true"/>
+	<property name="clientId" type="string"/>
+	<wsc:config name="RNALogin" doc:name="Web Service Consumer Config" doc:id="d7946935-8ad8-46bb-bc8b-c29948e9072e" xmlns:connection="true">
+		<wsc:connection wsdlLocation="#[vars.wsdlUrl]" service="LoginService" port="BasicHttpBinding_ILoginService" address="#[vars.loginUrl]" />
+	</wsc:config>
+	<wsc:config name="QueryConsumerConfig" doc:name="Web Service Consumer Config" doc:id="f86001cb-aaa6-457d-a236-12e3aa6e01f2" >
+		<wsc:connection wsdlLocation="#[vars.wsdlUrl]" service="QueryService" port="BasicHttpBinding_IQueryService" address="#[vars.queryUrl]" />
+	</wsc:config>
+	<wsc:config name="Routing_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="6c09dd67-3f22-4667-a3d2-21d3ffa18316" >
+		<wsc:connection wsdlLocation="#[vars.wsdlUrl]" service="RoutingService" port="BasicHttpBinding_IRoutingService" address="#[vars.routingURL]" />
+	</wsc:config>
+	<ee:object-store-caching-strategy name="Caching_Region_Specific_URLs" doc:name="Caching Strategy" doc:id="df4a4666-48c2-452a-b75e-5189cd9903c2" keyGenerationExpression="#[vars.businessUnit ++ '_' ++  vars.region]" />
+	<ee:object-store-caching-strategy name="Caching_Lookup_Config" doc:name="Caching Strategy" doc:id="d4676fa4-acd2-4fa3-9d26-c42de7b464b0" keyGenerationExpression="#[vars.value ++ '_' ++ vars.objectType ++ '_' ++ vars.businessUnit ++ '_' ++  vars.region]"/>
+	<validation:config name="Validation_Config" doc:name="Validation Config" doc:id="670b7374-a79a-4bf5-8004-246ee1231221" />
+
+    <operation name="login" doc:description="Logs in to RNA">
+    		<parameters>
+    			<parameter name="businessUnit" type="string"/>
+    			<parameter name="region" type="string"/>
+    			<parameter name="apiId" type="string"/>
+    			<parameter name="correlationId" type="string"/>
+    		</parameters>
+        <body>
+			<ee:cache doc:name="Cache Region Specific URLs" doc:id="4326c4dd-aed3-4c2b-905d-b4f52b9258b2" cachingStrategy-ref="Caching_Region_Specific_URLs">
+				<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting call to log into RNA"/>
+				<wsc:consume operation="Login" doc:name="Login to RNA" doc:id="58db4f26-d58c-4d84-a9ec-12cb223a35b0" config-ref="RNALogin">
+					<wsc:message>
+						<wsc:body><![CDATA[#[${file::dwl/Login.dwl}]]]></wsc:body>
+					</wsc:message>
+				</wsc:consume>
+				<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Completing call to log into RNA"/>
+				<ee:transform doc:name="Map Guid and queryURL" doc:id="21ca9ffd-eb71-4405-b3e6-fa37888bca62">
+					<ee:variables>
+						<ee:set-variable variableName="queryUrl" resource="dwl/LoginQueryUrl.dwl" />
+						<ee:set-variable variableName="sessionGuid" resource="dwl/LoginSessionGuid.dwl" />
+					</ee:variables>
+				</ee:transform>
+				<core:logger level="INFO" doc:name="Logger" doc:id="8658f904-ed24-4968-ba29-77c4645bd696" message="queryURL: #[payload.queryURL]" />
+				<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting call to retrieve URLs from RNA"/>
+				<wsc:consume doc:name="Get Mapping and Routing URLs" doc:id="d852f8be-a52e-4ed8-83ca-b3c5fe032f65" operation="RetrieveUrlsForContext" config-ref="QueryConsumerConfig">
+					<wsc:message>
+						<wsc:body><![CDATA[#[${file::dwl/UrlRequest.dwl}]]]></wsc:body>
+						<wsc:headers><![CDATA[#[${file::dwl/RnaHeader.dwl}]]]></wsc:headers>
+					</wsc:message>
+				</wsc:consume>
+				<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Completing call to retrieve URLs from RNA"/>
+				<ee:transform doc:name="Map Urls and Guid" doc:id="5b04004b-6dcb-4fa5-a4cb-1058135bf4d9">
+					<ee:message>
+						<ee:set-payload resource="dwl/QueryLookupResponse.dwl" />
+					</ee:message>
+				</ee:transform>
+				<core:logger level="INFO" doc:name="Logger" doc:id="b7744371-dcc8-4e9c-b84b-babbe402aa8f" message="URLs for the following Region #[vars.region] and Business Unit #[vars.businessUnit]. Maping URL #[payload.mappingURL] and Routing URL #[payload.routingURL]" />
+			</ee:cache>
+        </body>
+        <output type="OutputJsonType"/>
+    </operation>
+    <operation name="lookup" doc:description="Looks up a record from RNA">
+    		<parameters>
+    			<parameter name="queryUrl" type="string"/>
+    			<parameter name="sessionGuid" type="string"/>
+    			<parameter name="businessUnit" type="string"/>
+    			<parameter name="region" type="string"/>
+    			<parameter name="keyType" type="string"/>
+    			<parameter name="valueType" type="string"/>
+    			<parameter name="objectType" type="string"/>
+    			<parameter name="value" type="string"/>
+    			<parameter name="returnElement" type="string"/>
+    			<parameter name="apiId" type="string"/>
+    			<parameter name="correlationId" type="string"/>
+    		</parameters>
+        <body>
+			<ee:cache doc:name="Cache Key and Identifier" doc:id="bf263b04-b042-46cd-b3d6-142bbb5564ee" cachingStrategy-ref="Caching_Lookup_Config">
+				<tns:query doc:name="Query" doc:id="21a6c353-5b24-4ca4-8a2d-4c10eb0867e2" sessionGuid="#[vars.sessionGuid]" region="#[vars.region]" businessUnit="#[vars.businessUnit]" queryUrl="#[vars.queryUrl]" maxRecords="1" apiId="#[vars.apiId]" correlationId="#[vars.correlationId]">
+					<tns:configuration><![CDATA[#[${file::dwl/LookupRequest.dwl}]]]></tns:configuration>
+				</tns:query>
+				<ee:transform doc:name="Transform Response">
+					<ee:message>
+						<ee:set-payload resource="dwl/LookupResponse.dwl" />
+					</ee:message>
+				</ee:transform>
+			</ee:cache>
+    		</body>
+        <output type="string"/>
+    	</operation>
+    	<operation name="query" displayName="Query" summary="Used to pull data from RNA (single records or multiple records)">
+    		<parameters>
+    			<parameter name="queryUrl" type="string"/>
+    			<parameter name="sessionGuid" type="string"/>
+    			<parameter name="region" type="string"/>
+    			<parameter name="businessUnit" type="string"/>
+    			<parameter name="maxRecords" type="string" use="OPTIONAL"/>
+    			<parameter name="configuration" displayName="Configuration" type="QueryRequestJsonType" role="CONTENT" />
+    			<parameter name="apiId" type="string"/>
+    			<parameter name="correlationId" type="string"/>
+    		</parameters>
+    		<body>
+			<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting call to query RNA"/>
+			<wsc:consume operation="Retrieve" doc:name="Retrieve RNA Object" doc:id="7a3f4882-3bbe-47b7-b7bc-fd8c39a5ceda" config-ref="QueryConsumerConfig">
+				<wsc:message>
+					<wsc:body><![CDATA[#[${file::dwl/Query.dwl}]]]></wsc:body>
+					<wsc:headers><![CDATA[#[${file::dwl/RnaHeader.dwl}]]]></wsc:headers>
+				</wsc:message>
+			</wsc:consume>
+			<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Finished call to query RNA"/>
+			<validation:is-not-null doc:name="Is not null" doc:id="9e012103-cb56-4631-810a-ed409011977d" config-ref="Validation_Config" value="#[payload.body.RetrieveResponse.RetrieveResult.Items]">
+				<core:error-mapping sourceType="VALIDATION:NULL" targetType="ROUTING-UTILITIES:NOT_FOUND" />
+			</validation:is-not-null>
+			<validation:validate-size doc:name="Validate size" doc:id="437a692b-1b49-45ea-b7a6-78135bd06180" config-ref="Validation_Config" value="#[payload.Body.RetrieveResponse.RetrieveResult.Items.*DomainEntity]" min="1" max="#[if (vars.maxRecords != null) vars.maxRecords else sizeOf(payload.Body.RetrieveResponse.RetrieveResult.Items.*DomainEntity)]">
+				<core:error-mapping sourceType="VALIDATION:INVALID_SIZE" targetType="ROUTING-UTILITIES:INVALID_QUERY_CONFIG" />
+			</validation:validate-size>
+			<ee:transform doc:name="Transform Response" doc:id="f77d87b3-e0b4-434e-b66a-97514b1e9754">
+				<ee:message>
+					<ee:set-payload resource="dwl/QueryResponse.dwl" />
+				</ee:message>
+			</ee:transform>
+   		</body>
+   		<output type="RetrievalOutputJsonType"/>
+    	</operation>
+   	<operation name="save" displayName="Save" summary="Used to save to RNA (single records)">
+    		<parameters>
+    			<parameter name="routingUrl" type="string"/>
+    			<parameter name="sessionGuid" type="string"/>
+    			<parameter name="region" type="string"/>
+    			<parameter name="businessUnit" type="string"/>
+    			<parameter name="action" type="string" example="Add"/>
+    			<parameter name="entityKey" type="string" use="OPTIONAL"/>
+    			<parameter name="saveType" type="string" example="Worker"/>
+    			<parameter name="configuration" displayName="Configuration" type="QueryRequestJsonType" role="CONTENT" />
+    			<parameter name="apiId" type="string"/>
+    			<parameter name="correlationId" type="string"/>
+    		</parameters>
+    		<body>
+			<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting call to save data to RNA"/>
+			<wsc:consume doc:name="Create Worker" doc:id="7a3f4882-3bbe-47b7-b7bc-fd8c39a5ceda" config-ref="Routing_Consumer_Config" operation="Save">
+				<wsc:message>
+					<wsc:body><![CDATA[#[${file::dwl/Save.dwl}]]]></wsc:body>
+					<wsc:headers ><![CDATA[#[${file::dwl/RnaHeader.dwl}]]]></wsc:headers>
+				</wsc:message>
+			</wsc:consume>
+			<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Finished call to save data to RNA"/>
+			<core:choice doc:name="Choice" doc:id="5bb5d945-75e1-4a2d-aacd-3f74ac3d7529" >
+				<core:when expression="#[payload.body.SaveResponse.SaveResult[0].Error != null]" >
+					<core:logger level="WARN" doc:name="Logger" doc:id="4efafcc6-0d07-4fe8-907e-77f150f7977d" message="Failed to save data: #[output application/json --- payload.body.SaveResponse.SaveResult[0].Error]"/>
+					<core:raise-error type="ROUTING-UTILITIES:BAD_REQUEST" description="#[payload.body.SaveResponse.SaveResult[0].Error.Code.ErrorCode_Status]"/>
+				</core:when>
+				<core:otherwise >
+					<ee:transform doc:name="Map Response" doc:id="2838ea95-ec77-426e-a9d3-0141b13409fc">
+						<ee:message>
+							<ee:set-payload><![CDATA[${file::dwl/SaveResponse.dwl}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</core:otherwise>
+			</core:choice>
+    		</body>
+    		<output type="string"/>
+    	</operation>
+	<operation name="unassign-order" displayName="Unassign Order" summary="Used to unassign order in RNA (single records)">
+	   		<parameters>
+	   			<parameter name="routingUrl" type="string"/>
+	   			<parameter name="sessionGuid" type="string"/>
+	   			<parameter name="region" type="string"/>
+	   			<parameter name="businessUnit" type="string"/>
+	   			<parameter name="version" type="string"/>
+	   			<parameter name="entityKey" type="string"/>
+	   			<parameter name="apiId" type="string"/>
+	   			<parameter name="correlationId" type="string"/>
+	   		</parameters>
+	    		<body>
+				<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting unassign order in RNA"/>
+				<wsc:consume doc:name="Unassign Orders" doc:id="7a3f4882-3bbe-47b7-b7bc-fd8c39a5ce1V" config-ref="Routing_Consumer_Config" operation="UnassignOrders">
+					<wsc:message>
+						<wsc:body><![CDATA[#[${file::dwl/UnassignOrders.dwl}]]]></wsc:body>
+				<wsc:headers ><![CDATA[#[${file::dwl/RnaHeader.dwl}]]]></wsc:headers>
+		</wsc:message>
+			</wsc:consume>
+			<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Finished call to unassign order in RNA"/>
+			<core:choice doc:name="Choice" doc:id="5bb5d945-75e1-4a2d-aacd-3f74ac3d75cd" >
+				<core:when expression="#[payload.body.UnassignOrdersResponse.UnassignOrdersResult.Errors != null]" >
+					<core:logger level="WARN" doc:name="Logger" doc:id="4efafcc6-0d07-4fe8-907e-77f150f797xx" message="Failed to unASSIGN data: #[output application/json --- payload.body.UnassignOrdersResponse.UnassignOrdersResult.Errors]"/>
+					<core:raise-error type="ROUTING-UTILITIES:BAD_REQUEST" description="#[payload.body.UnassignOrdersResponse.UnassignOrdersResult.Errors.'ManipulationResult.ManipulationError'.Reason.ErrorCode_Status]"/>
+				</core:when>
+					<core:otherwise> 
+						<core:logger level="DEBUG" message="Unassign was successful"/>
+				</core:otherwise>
+			</core:choice>
+		</body>
+	</operation>
+   	<operation name="save-order" displayName="Save Order" summary="Used to save order to RNA (single records)">
+    		<parameters>
+    			<parameter name="routingUrl" type="string"/>
+    			<parameter name="sessionGuid" type="string"/>
+    			<parameter name="region" type="string"/>
+    			<parameter name="businessUnit" type="string"/>
+    			<parameter name="taskSpecType" type="string"/>
+    			<parameter name="configuration" displayName="Configuration" type="QueryRequestJsonType" role="CONTENT" />
+    			<parameter name="apiId" type="string"/>
+    			<parameter name="correlationId" type="string"/>
+    		</parameters>
+    		<body>
+			<audit:activity-start apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Starting call to save data to RNA"/>
+			<wsc:consume doc:name="Create Worker" doc:id="7a3f4882-3bbe-47b7-b7bc-fd8c39a5ceda" config-ref="Routing_Consumer_Config" operation="SaveOrders">
+				<wsc:message>
+					<wsc:body><![CDATA[#[${file::dwl/SaveOrder.dwl}]]]></wsc:body>
+					<wsc:headers ><![CDATA[#[${file::dwl/RnaHeader.dwl}]]]></wsc:headers>
+				</wsc:message>
+			</wsc:consume>
+			<audit:activity-complete apiId="#[vars.apiId]" correlationId="#[vars.correlationId]" message="Finished call to save data to RNA"/>
+			<core:choice doc:name="Choice" doc:id="5bb5d945-75e1-4a2d-aacd-3f74ac3d7529" >
+				<core:when expression="#[payload.body.SaveOrdersResponse.SaveOrdersResult.SaveResult.Error != null]" >
+					<core:logger level="WARN" doc:name="Logger" doc:id="4efafcc6-0d07-4fe8-907e-77f150f7977d" message="Failed to save data: #[output application/json --- payload.body.SaveOrdersResponse.SaveOrdersResult.SaveResult.Error]"/>
+					<core:raise-error type="ROUTING-UTILITIES:BAD_REQUEST" description="#[payload.body.SaveOrdersResponse.SaveOrdersResult.SaveResult.Error.Code.ErrorCode_Status]"/>
+				</core:when>
+				<core:otherwise >
+					<ee:transform doc:name="Map Response" doc:id="2838ea95-ec77-426e-a9d3-0141b13409fc">
+						<ee:message>
+							<ee:set-payload resource="dwl/SaveOrderResponse.dwl" />
+						</ee:message>
+					</ee:transform>
+				</core:otherwise>
+			</core:choice>
+    		</body>
+    		<output type="string"/>
+    	</operation>
+ </module> 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Audit"
+        doc:description="Log audit messages"
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+        xmlns:core="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <operation name="process-start" doc:description="Creates a process start message">
+    		<parameters>
+    			<parameter name="processId" type="string" displayName="Process ID" summary="The ID of the process"/>
+    			<parameter name="correlationId" type="string" displayName="Correlation ID" example="#[attributes.headers.'x-correlation-id']" summary="The correlation id (crated at a listener or experience level call) of this call stack"/>
+    			<parameter name="content" type="string" displayName="Content" />
+    		</parameters>
+        <body>
+            <core:logger category="AUDIT" level="INFO" message="AUDIT_MESSAGE___PROCESS___PROCESS_ID=#[vars.processId]:::CORRELATION_ID=#[vars.correlationId]:::CONTENT=#[vars.content]:::STATE=EXECUTING:::DATETIME=#[now() as String {format: &quot;yyyyMMdd'T'HHmmssSSSZ&quot;}]"/>
+        </body>
+    </operation>
+
+    <operation name="process-complete" doc:description="Creates a process complete message">
+    		<parameters>
+    			<parameter name="processId" type="string" displayName="Process ID" summary="The ID of the process"/>
+    			<parameter name="correlationId" type="string" displayName="Correlation ID" example="#[attributes.headers.'x-correlation-id']" summary="The correlation id (crated at a listener or experience level call) of this call stack"/>
+    		</parameters>
+        <body>
+            <core:logger category="AUDIT" level="INFO" message="AUDIT_MESSAGE___PROCESS___PROCESS_ID=#[vars.processId]:::CORRELATION_ID=#[vars.correlationId]:::STATE=COMPLETE:::DATETIME=#[now() as String {format: &quot;yyyyMMdd'T'HHmmssSSSZ&quot;}]"/>
+        </body>
+    </operation>
+
+    <operation name="process-error" doc:description="Creates a process error message">
+    		<parameters>
+    			<parameter name="processId" type="string" displayName="Process ID" summary="The ID of the process"/>
+    			<parameter name="correlationId" type="string" displayName="Correlation ID" example="#[attributes.headers.'x-correlation-id']" summary="The correlation id (crated at a listener or experience level call) of this call stack"/>
+    			<parameter name="errorCode" type="string" displayName="Error Code" summary="Mule error code" example="APIKIT:NOT_FOUND"/>
+    			<parameter name="errorMessage" type="string" displayName="Error message from exception" summary="Error message from the exception"/>
+    			<parameter name="requestPayload" type="string"/>
+    		</parameters>
+        <body>
+            <core:logger category="AUDIT" level="INFO" message="AUDIT_MESSAGE___PROCESS___PROCESS_ID=#[vars.processId]:::CORRELATION_ID=#[vars.correlationId]:::STATE=ERROR:::ERROR_CODE=#[vars.errorCode]:::ERROR_MESSAGE=#[vars.errorMessage]:::DATETIME=#[now() as String {format: &quot;yyyyMMdd'T'HHmmssSSSZ&quot;}]:::REQUEST_PAYLOAD=#[vars.requestPayload]"/>
+        </body>
+    </operation>
+
+    <operation name="activity-start" doc:description="Creates an activity start message">
+    		<parameters>
+    			<parameter name="processId" type="string" displayName="Process ID" summary="The ID of the process"/>
+    			<parameter name="correlationId" type="string" displayName="Correlation ID" example="#[attributes.headers.'x-correlation-id']" summary="The correlation id (crated at a listener or experience level call) of this call stack"/>
+    			<parameter name="message" type="string" displayName="Message" summary="Activity message"/>
+    		</parameters>
+        <body>
+            <core:logger category="AUDIT" level="INFO" message="AUDIT_MESSAGE___ACTIVITY___PROCESS_ID=#[vars.processId]:::CORRELATION_ID=#[vars.correlationId]:::STATE=EXECUTING:::MESSAGE=#[vars.message]:::DATETIME=#[now() as String {format: &quot;yyyyMMdd'T'HHmmssSSSZ&quot;}]"/>
+        </body>
+    </operation>
+
+    <operation name="activity-complete" doc:description="Creates an activity complete message">
+    		<parameters>
+    			<parameter name="processId" type="string" displayName="Process ID" summary="The ID of the process"/>
+    			<parameter name="correlationId" type="string" displayName="Correlation ID" example="#[attributes.headers.'x-correlation-id']" summary="The correlation id (crated at a listener or experience level call) of this call stack"/>
+    			<parameter name="message" type="string" displayName="Message" summary="Activity message"/>
+    		</parameters>
+        <body>
+            <core:logger category="AUDIT" level="INFO" message="AUDIT_MESSAGE___ACTIVITY___PROCESS_ID=#[vars.processId]:::CORRELATION_ID=#[vars.correlationId]:::STATE=COMPLETE:::MESSAGE=#[vars.message]:::DATETIME=#[now() as String {format: &quot;yyyyMMdd'T'HHmmssSSSZ&quot;}]"/>
+        </body>
+    </operation>
+ </module>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalogs xmlns="http://www.mulesoft.org/schema/mule/types" >
+	<catalog name="OutputJsonType" format="application/json">
+    		<schema format="application/json+schema" location="./schemas/output-schema.json" />
+    </catalog>
+	<catalog name="QueryRequestJsonType" format="application/json">
+    		<schema format="application/json+schema" location="./schemas/query-request-schema.json"/>
+    </catalog>
+    <catalog name="SaveRequestJsonType" format="application/json">
+    		<schema format="application/json+schema" location="./schemas/save-request-schema.json"/>
+    </catalog>
+    <catalog name="RetrievalOutputJsonType" format="application/json">
+    		<schema format="application/json+schema" location="./schemas/retrieval-output-schema.json"/>
+    </catalog>
+</catalogs>

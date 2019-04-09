@@ -1,0 +1,76 @@
+{
+  "fields": {
+    "Description": "GAVIN Roadnet TEST5",
+    "FaxNumber": "1234567890",
+    "GeocodeAccuracy_GeocodeAccuracy": "RooftopExact",
+    "Identifier": "GAVIN5",
+    "LastOrderDate": "2018-05-02",
+    "PhoneNumber": "8471111111",
+    "StandardInstructions": "park around back",
+    "WorldTimeZone_TimeZone": "EasternTimeUSCanada",
+    "DayOfWeekFlags_DeliveryDays": "All",
+    "OpenCloseOverrides": [
+      {
+        "fieldName": "ServiceLocationOpenCloseDetail",
+        "action": "Add",
+        "fields": {
+          "DailyTimePeriod": {
+            "DayOfWeekFlags_DaysOfWeek": "Tuesday,Thursday",
+            "EndTime": "10:00:00.0000000",
+            "StartTime": "00:00:00.0000000"
+          },
+          "OrderClassEntityKey": "505"
+        }
+      },
+      {
+        "fieldName": "ServiceLocationOpenCloseDetail",
+        "action": "Add",
+        "fields": {
+          "DailyTimePeriod": {
+            "DayOfWeekFlags_DaysOfWeek": "Monday,Wednesday,Friday",
+            "EndTime": "17:00:00.0000000",
+            "StartTime": "09:00:00.0000000"
+          },
+          "OrderClassEntityKey": "505"
+        }
+      },
+      {
+        "fieldName": "ServiceLocationOpenCloseDetail",
+        "action": "Add",
+        "fields": {
+          "DailyTimePeriod": {
+            "DayOfWeekFlags_DaysOfWeek": "WeekendDays",
+            "EndTime": "16:00:00.0000000",
+            "StartTime": "10:00:00.0000000"
+          },
+          "OrderClassEntityKey": "506"
+        }
+      },
+      {
+        "fieldName": "ServiceLocationOpenCloseDetail",
+        "action": "Add",
+        "fields": {
+          "DailyTimePeriod": {
+            "DayOfWeekFlags_DaysOfWeek": "All",
+            "EndTime": "17:00:00.0000000",
+            "StartTime": "07:00:00.0000000"
+          },
+          "OrderClassEntityKey": "511"
+        }
+      }
+    ],
+    "TimeWindowTypeEntityKey": "606"
+  },
+  "customProperties": [
+    {
+      "key": "ContactEmail",
+      "value": "AlexPrimary@gmail.com",
+      "valueType": "string"
+    },
+    {
+      "key": "AlternateContactEmail",
+      "value": "altCustEmail@aol.com",
+      "valueType": "string"
+    }
+  ]
+}
